@@ -75,7 +75,6 @@ COPY --from=builder /usr/local/bin/kustomize /usr/local/bin/kustomize
 # script to add current (possibly arbitrary) user to /etc/passwd at runtime
 # (if it's not already there, to be openshift friendly)
 COPY uid_entrypoint.sh /usr/local/bin/uid_entrypoint.sh
-COPY uid_entrypoint.sh .
 
 # support for mounting configuration from a configmap
 RUN mkdir -p /app/config/ssh && \
