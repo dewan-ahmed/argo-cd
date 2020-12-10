@@ -75,6 +75,7 @@ COPY --from=builder /usr/local/bin/kustomize /usr/local/bin/kustomize
 # script to add current (possibly arbitrary) user to /etc/passwd at runtime
 # (if it's not already there, to be openshift friendly)
 COPY uid_entrypoint.sh /usr/local/bin/uid_entrypoint.sh
+COPY uid_entrypoint.sh .
 
 # support for mounting configuration from a configmap
 RUN mkdir -p /app/config/ssh && \
@@ -109,6 +110,7 @@ ARG ARGO_VERSION=latest
 ENV ARGO_VERSION=$ARGO_VERSION
 RUN NODE_OPTIONS=--max_old_space_size=8192
 RUN yarn upgrade
+RUN ls -la /src
 
 ####################################################################################################
 # Argo CD Build stage which performs the actual build of Argo CD binaries
@@ -126,7 +128,7 @@ RUN go mod download
 
 # Perform the build
 COPY . .
-# RUN go mod vendor
+RUN go mod vendor
 RUN make cli-local server controller repo-server argocd-util
 
 ARG BUILD_ALL_CLIS=true
@@ -140,4 +142,4 @@ RUN if [ "$BUILD_ALL_CLIS" = "true" ] ; then \
 ####################################################################################################
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 COPY --from=argocd-build /go/src/github.com/argoproj/argo-cd/dist/argocd* /usr/local/bin/
-COPY --from=argocd-ui ./src/dist/app /shared/app
+COPY --from=argocd-ui ./src/src/app /shared/app

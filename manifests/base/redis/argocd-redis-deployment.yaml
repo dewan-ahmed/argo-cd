@@ -25,11 +25,6 @@ spec:
       - name: redis
         image: redis:5.0.10-alpine
         imagePullPolicy: Always
-        args:
-        - "--save"
-        - ""
-        - "--appendonly"
-        - "no"
         ports:
         - containerPort: 6379
       affinity:
